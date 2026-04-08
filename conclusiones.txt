@@ -1,0 +1,32 @@
+CONCLUSIONES DEL EJERCICIO
+
+1. Hallazgos del smoke test
+
+- El endpoint https://fakestoreapi.com/auth/login responde con estado HTTP 201 Created y un token en el cuerpo cuando la autenticacion es exitosa.
+- Ese comportamiento obligo a ajustar la validacion funcional para aceptar respuestas exitosas 200 o 201, en lugar de asumir solamente 200.
+- La prueba de humo quedo estable con 5 de 5 logins validos, 0% de errores y latencia maxima de 998.16 ms.
+
+2. Resultados de la prueba de carga final
+
+- Escenario ejecutado: 21 TPS durante 1 minuto
+- Peticiones totales: 1260
+- Throughput promedio: 20.90 TPS
+- Latencia promedio: 330.34 ms
+- Latencia p95: 348.80 ms
+- Latencia maxima observada: 625.99 ms
+- Tasa de error: 0.00%
+- Logins exitosos: 100.00%
+- VUs maximos usados durante la prueba: 9
+
+3. Validacion frente a los criterios del reto
+
+- TPS minimo de 20: cumple
+- Tiempo de respuesta maximo de 1.5 segundos: cumple
+- Tasa de error menor a 3%: cumple
+
+4. Conclusiones
+
+- El servicio evaluado soporta el escenario propuesto dentro de los limites solicitados para este ejercicio.
+- La latencia observada quedo muy por debajo del limite de 1500 ms, incluso en el peor caso registrado.
+- No se evidenciaron errores funcionales ni tecnicos durante la carga final.
+- Como el servicio es publico y externo, los resultados pueden variar con el tiempo, pero la evidencia guardada en reports/ demuestra que en esta ejecucion el objetivo fue alcanzado con margen.
