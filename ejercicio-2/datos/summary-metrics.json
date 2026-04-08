@@ -1,0 +1,140 @@
+{
+  "summary": {
+    "transaction_name": "App Transaction Balance response was OK",
+    "tool": "k6",
+    "checks": {
+      "success_rate_pct": 97.55,
+      "success_count": 269891,
+      "fail_count": 6759
+    },
+    "data": {
+      "received_mb": 842,
+      "received_rate_kbps": 223,
+      "sent_mb": 588,
+      "sent_rate_kbps": 156
+    },
+    "http_req_blocked": {
+      "avg_ms": 0.01097,
+      "min_ms": 0,
+      "med_ms": 0,
+      "max_ms": 35.02,
+      "p90_ms": 0,
+      "p95_ms": 0
+    },
+    "http_req_connecting": {
+      "avg_ms": 0.0033,
+      "min_ms": 0,
+      "med_ms": 0,
+      "max_ms": 11.82,
+      "p90_ms": 0,
+      "p95_ms": 0
+    },
+    "http_req_duration": {
+      "avg_ms": 861.68,
+      "min_ms": 191.86,
+      "med_ms": 613.42,
+      "max_ms": 29930,
+      "p90_ms": 1280,
+      "p95_ms": 1570
+    },
+    "http_req_duration_expected": {
+      "avg_ms": 735.84,
+      "min_ms": 244.92,
+      "med_ms": 600.7,
+      "max_ms": 26720,
+      "p90_ms": 1220,
+      "p95_ms": 1420
+    },
+    "http_req_failed": {
+      "rate_pct": 2.44,
+      "count": 6759
+    },
+    "http_req_receiving": {
+      "avg_ms": 0.42403,
+      "min_ms": 0,
+      "med_ms": 0.3207,
+      "max_ms": 39.58,
+      "p90_ms": 0.9884,
+      "p95_ms": 1.05
+    },
+    "http_req_sending": {
+      "avg_ms": 0.04322,
+      "min_ms": 0,
+      "med_ms": 0,
+      "max_ms": 31.25,
+      "p90_ms": 0,
+      "p95_ms": 0.517
+    },
+    "http_req_tls_handshaking": {
+      "avg_ms": 0.00736,
+      "min_ms": 0,
+      "med_ms": 0,
+      "max_ms": 27.02,
+      "p90_ms": 0,
+      "p95_ms": 0
+    },
+    "http_req_waiting": {
+      "avg_ms": 861.21,
+      "min_ms": 191.86,
+      "med_ms": 613.01,
+      "max_ms": 29930,
+      "p90_ms": 1280,
+      "p95_ms": 1570
+    },
+    "http_reqs": {
+      "total": 276650,
+      "rate": 73.176857
+    },
+    "iteration_duration": {
+      "avg_ms": 1860,
+      "min_ms": 0,
+      "med_ms": 1610,
+      "max_ms": 30940,
+      "p90_ms": 2290,
+      "p95_ms": 2570
+    },
+    "vus": {
+      "current": 2,
+      "min": 2,
+      "max": 140
+    },
+    "vus_max": {
+      "value": 140,
+      "min": 140,
+      "max": 140
+    },
+    "stage_failures": [
+      {
+        "stage": "stage_0",
+        "status": "HTTP5xx",
+        "count": 1,
+        "rate_per_s": 0.000265
+      },
+      {
+        "stage": "stage_1",
+        "status": "HTTP4xx",
+        "count": 769,
+        "rate_per_s": 0.203409
+      },
+      {
+        "stage": "stage_1",
+        "status": "HTTP5xx",
+        "count": 5987,
+        "rate_per_s": 1.583625
+      },
+      {
+        "stage": "stage_2",
+        "status": "HTTP5xx",
+        "count": 2,
+        "rate_per_s": 0.000529
+      }
+    ]
+  },
+  "monitoring": {
+    "reference_point": {
+      "timestamp": "2025-04-24 02:02:00",
+      "vus": 140,
+      "http_reqs_per_s": 82.6
+    }
+  }
+}
