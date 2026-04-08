@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prueba de carga del login</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4efe7;
+      --panel: #fffaf2;
+      --panel-strong: #f6ead8;
+      --ink: #1f2933;
+      --muted: #5d6a75;
+      --accent: #005f73;
+      --accent-soft: #0a9396;
+      --warning: #bb3e03;
+      --ok: #2a9d8f;
+      --border: #d9c7af;
+      --shadow: 0 18px 40px rgba(31, 41, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(10, 147, 150, 0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(187, 62, 3, 0.12), transparent 24%),
+        linear-gradient(180deg, #f7f1e8 0%, #f2ece2 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 36px 20px 44px;
+    }
+
+    .hero {
+      background: linear-gradient(140deg, rgba(0, 95, 115, 0.96), rgba(10, 147, 150, 0.9));
+      color: #fefcf8;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(254, 252, 248, 0.82);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .cards {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .charts {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .card strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+
+    .card span {
+      display: block;
+      font-size: 0.96rem;
+      color: var(--muted);
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .status {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--panel-strong);
+      border: 1px solid rgba(0, 95, 115, 0.08);
+    }
+
+    .status-row b {
+      font-size: 1.05rem;
+    }
+
+    .status-row span {
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 104px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pill.ok {
+      background: var(--ok);
+    }
+
+    .pill.warn {
+      background: var(--warning);
+    }
+
+    .meta {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 320px !important;
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 20px 14px 28px;
+      }
+
+      .hero,
+      .panel {
+        border-radius: 18px;
+      }
+
+      .status-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Prueba de carga del login</h1>
+      <p>Reporte visual generado a partir del resumen exportado por k6. El objetivo del ejercicio es validar el login de Fake Store API con una meta de 20 TPS, latencia maxima de 1500 ms y error menor a 3%.</p>
+    </section>
+
+    <section class="grid cards">
+      <article class="panel card">
+        <strong>1260</strong>
+        <span>Peticiones ejecutadas</span>
+      </article>
+      <article class="panel card">
+        <strong>20.9</strong>
+        <span>TPS promedio</span>
+      </article>
+      <article class="panel card">
+        <strong>348.81 ms</strong>
+        <span>Latencia p95</span>
+      </article>
+      <article class="panel card">
+        <strong>626 ms</strong>
+        <span>Latencia maxima</span>
+      </article>
+    </section>
+
+    <section class="grid charts">
+      <article class="panel">
+        <h2 class="section-title">Distribucion de latencia</h2>
+        <canvas id="latencyChart"></canvas>
+      </article>
+      <article class="panel">
+        <h2 class="section-title">Calidad de la ejecucion</h2>
+        <canvas id="qualityChart"></canvas>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2 class="section-title">Indicadores de cumplimiento</h2>
+        <div class="status">
+          <div class="status-row">
+            <div>
+              <b>TPS minimo</b>
+              <span>Objetivo: al menos 20 TPS</span>
+            </div>
+            <div class="pill ok">Cumple</div>
+          </div>
+          <div class="status-row">
+            <div>
+              <b>Latencia maxima</b>
+              <span>Objetivo: maximo 1500 ms</span>
+            </div>
+            <div class="pill ok">Cumple</div>
+          </div>
+          <div class="status-row">
+            <div>
+              <b>Tasa de error</b>
+              <span>Objetivo: menor a 3%</span>
+            </div>
+            <div class="pill ok">Cumple</div>
+          </div>
+          <div class="status-row">
+            <div>
+              <b>Checks funcionales</b>
+              <span>Pases: 3780 | Fallos: 0</span>
+            </div>
+            <div class="pill ok">Estable</div>
+          </div>
+        </div>
+        <div class="meta">Generado: 2026-04-08 12:32:31</div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const durationLabels = ["min","avg","med","p90","p95","max"];
+    const durationData = [312.18,330.35,326.26,342.67,348.81,626];
+    const qualityLabels = ["TPS","Error %","Lentas %","Exito %"];
+    const qualityData = [20.9,0,0,100];
+
+    new Chart(document.getElementById('latencyChart'), {
+      type: 'bar',
+      data: {
+        labels: durationLabels,
+        datasets: [{
+          label: 'Milisegundos',
+          data: durationData,
+          borderRadius: 10,
+          backgroundColor: ['#94d2bd', '#0a9396', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#5d6a75'
+            },
+            grid: {
+              color: 'rgba(93, 106, 117, 0.12)'
+            }
+          },
+          x: {
+            ticks: {
+              color: '#5d6a75'
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('qualityChart'), {
+      type: 'radar',
+      data: {
+        labels: qualityLabels,
+        datasets: [{
+          label: 'Indicadores',
+          data: qualityData,
+          fill: true,
+          backgroundColor: 'rgba(10, 147, 150, 0.18)',
+          borderColor: '#005f73',
+          pointBackgroundColor: '#bb3e03',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#bb3e03'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            angleLines: {
+              color: 'rgba(93, 106, 117, 0.15)'
+            },
+            grid: {
+              color: 'rgba(93, 106, 117, 0.15)'
+            },
+            pointLabels: {
+              color: '#5d6a75'
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#5d6a75'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
