@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>InformeResultados</title>
+  <style>
+    body {
+      font-family: Calibri, "Segoe UI", sans-serif;
+      color: #1f2937;
+      margin: 34px 42px;
+      line-height: 1.42;
+      font-size: 11pt;
+    }
+
+    h1, h2, h3 {
+      color: #0f4c81;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 24pt;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 16pt;
+      border-bottom: 1px solid #cfd8e3;
+      padding-bottom: 4px;
+      margin-top: 26px;
+    }
+
+    h3 {
+      font-size: 13pt;
+      margin-top: 18px;
+    }
+
+    p {
+      margin: 8px 0;
+      text-align: justify;
+    }
+
+    ul {
+      margin: 8px 0 8px 20px;
+      padding: 0;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .intro {
+      background: #eef5fb;
+      border: 1px solid #d3e1ef;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 18px 0 22px;
+    }
+
+    .metrics {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+    }
+
+    .metrics th,
+    .metrics td {
+      border: 1px solid #d7dde5;
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    .metrics th {
+      background: #f3f7fb;
+      text-align: left;
+    }
+
+    .formula {
+      background: #f9fafb;
+      border-left: 4px solid #0f4c81;
+      padding: 10px 12px;
+      font-family: Consolas, "Courier New", monospace;
+      margin: 10px 0 14px;
+      white-space: pre-wrap;
+    }
+
+    .chart {
+      margin: 18px 0 24px;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+
+    .chart img {
+      max-width: 100%;
+      border: 1px solid #d7dde5;
+    }
+
+    .caption {
+      font-size: 9.5pt;
+      color: #4b5563;
+      margin-top: 6px;
+    }
+
+    .callout {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+
+    .small {
+      font-size: 9.5pt;
+      color: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <h1>Informe de Resultados</h1>
+  <p style="text-align:center;"><strong>Ejercicio 2 - Analisis de una prueba de carga</strong></p>
+  <p style="text-align:center;">Generado: 2026-04-08 15:23:48</p>
+
+  <div class="intro">
+    <p>Este informe analiza la evidencia entregada en dos fuentes: el resumen textual de <strong>k6</strong> y el diagrama de monitoreo con la relacion entre <strong>usuarios virtuales</strong> y <strong>peticiones por segundo</strong>. El objetivo es interpretar con rigor lo que muestran los datos, explicar el hallazgo central y proponer causas probables del cuello de botella junto con acciones de mejora.</p>
+  </div>
+
+  <h2>1. Datos basicos de la prueba</h2>
+  <table class="metrics">
+    <tr>
+      <th>Dato</th>
+      <th>Valor observado</th>
+      <th>Lectura</th>
+    </tr>
+    <tr>
+      <td>Tipo de prueba</td>
+      <td>Prueba de carga por etapas con fase principal sostenida</td>
+      <td>Se interpreta asi por la presencia de metricas por <code>stage</code>, un maximo de 140 VUs y un tramo principal visible de carga alta en el diagrama.</td>
+    </tr>
+    <tr>
+      <td>Herramienta</td>
+      <td>k6</td>
+      <td>Las metricas visibles corresponden al formato tipico de salida de k6: <code>http_req_duration</code>, <code>http_req_waiting</code>, <code>vus</code> y <code>vus_max</code>.</td>
+    </tr>
+    <tr>
+      <td>Volumen total</td>
+      <td>276,650 peticiones</td>
+      <td>Es una corrida larga y suficientemente pesada para observar degradacion sostenida.</td>
+    </tr>
+    <tr>
+      <td>Throughput promedio</td>
+      <td>73.176857 req/s</td>
+      <td>El sistema movio bastante volumen, pero ese promedio oculta una fase de caida fuerte a mitad de la ejecucion.</td>
+    </tr>
+    <tr>
+      <td>Maximo de VUs</td>
+      <td>140 VUs</td>
+      <td>La grafica confirma una fase sostenida en 140 VUs.</td>
+    </tr>
+    <tr>
+      <td>Resultado global</td>
+      <td>97.55% exitosas y 2.44% fallidas</td>
+      <td>La prueba no colapsa por completo, pero tampoco es completamente estable.</td>
+    </tr>
+  </table>
+
+  <h3>Calculo de duracion aproximada</h3>
+  <div class="formula">276,650 / 73.176857 = 3,780.57 s aprox. 63 min 0.57 s</div>
+  <p>La ejecucion duro aproximadamente <strong>63 minutos</strong>. Esa duracion es coherente con la ventana temporal visible en la grafica, que muestra un tramo extendido de actividad antes de la caida final por cierre de la prueba.</p>
+
+  <h2>2. Resultados a primera vista</h2>
+  <p>A primera vista la prueba deja una impresion mixta. Por un lado, el volumen total de peticiones es alto y el throughput promedio supera las 73 peticiones por segundo, lo que indica que el sistema fue capaz de procesar una carga importante. Por otro lado, el porcentaje de fallos llega a <strong>2.44%</strong>, y la latencia maxima se dispara hasta <strong>29.93 s</strong>. Eso significa que, aunque la mayor parte de la ejecucion fue productiva, existen sintomas claros de saturacion o inestabilidad bajo carga alta.</p>
+
+  <div class="chart">
+    <img src="file:///C:/Sofka%20U/S9-RetoCalidad-EjercicioPerformance/ejercicio-2/graficas/resultado-global.png" alt="Resultado global de la prueba">
+    <div class="caption">Figura 1. Relacion entre peticiones exitosas y fallidas observadas en el resumen de k6.</div>
+  </div>
+
+  <h2>3. Resultados detallados</h2>
+  <table class="metrics">
+    <tr>
+      <th>Metrica</th>
+      <th>Valor</th>
+      <th>Interpretacion</th>
+    </tr>
+    <tr>
+      <td>Latencia promedio</td>
+      <td>861.68 ms</td>
+      <td>El promedio no es desastroso, pero ya muestra una carga perceptible sobre el servicio.</td>
+    </tr>
+    <tr>
+      <td>Latencia mediana</td>
+      <td>613.42 ms</td>
+      <td>La mitad de las peticiones respondio en menos de 613 ms, lo que sugiere que el sistema fue razonablemente rapido en condiciones normales.</td>
+    </tr>
+    <tr>
+      <td>P90 / P95</td>
+      <td>1.28 s / 1.57 s</td>
+      <td>El 10% y el 5% mas lento ya entran en una zona claramente degradada. La cola de latencia existe y es relevante.</td>
+    </tr>
+    <tr>
+      <td>Latencia maxima</td>
+      <td>29.93 s</td>
+      <td>Es el dato mas duro de la distribucion. Un maximo cercano a 30 segundos indica episodios extremos de espera.</td>
+    </tr>
+    <tr>
+      <td>Tiempo de espera del servidor</td>
+      <td>861.21 ms promedio</td>
+      <td>Practicamente coincide con la latencia total; por tanto, el tiempo se consume esperando respuesta del backend, no en la red del cliente.</td>
+    </tr>
+    <tr>
+      <td>Red y conexion</td>
+      <td>Bloqueo 0.01 ms, conexion 0.00 ms, TLS 0.01 ms, envio 0.04 ms, recepcion 0.42 ms</td>
+      <td>Estas metricas son minimas. No hay evidencia fuerte de que la red sea el principal cuello de botella.</td>
+    </tr>
+    <tr>
+      <td>Errores por tipo</td>
+      <td>5,990 errores 5xx y 769 errores 4xx</td>
+      <td>La falla dominante es de servidor, no de cliente.</td>
+    </tr>
+  </table>
+
+  <h3>Relacion entre waiting y duration</h3>
+  <div class="formula">861.21 / 861.68 x 100 = 99.95%</div>
+  <p>El promedio de <code>http_req_waiting</code> representa aproximadamente el <strong>99.95%</strong> del promedio total de <code>http_req_duration</code>. Esta es una evidencia fuerte de que la mayor parte del tiempo se pierde dentro del servicio o de sus dependencias. En otras palabras, el problema principal no parece estar en el envio, en la recepcion ni en el establecimiento de la conexion.</p>
+  <p>Adicionalmente, la diferencia entre el promedio global de latencia y el promedio de las respuestas esperadas es de <strong>125.84 ms</strong>. Eso refuerza la idea de que el problema no solo afecta a las respuestas fallidas, sino que ya presiona a la experiencia general de la transaccion.</p>
+
+  <div class="chart">
+    <img src="file:///C:/Sofka%20U/S9-RetoCalidad-EjercicioPerformance/ejercicio-2/graficas/perfil-latencia.png" alt="Perfil de latencia">
+    <div class="caption">Figura 2. Perfil de latencia en escala logaritmica. La cola larga se hace evidente al comparar mediana, promedio y maximo.</div>
+  </div>
+
+  <h2>4. Relacion entre el resumen de terminal y la grafica</h2>
+  <p>La terminal aporta el panorama agregado de toda la corrida: <strong>73.176857 req/s</strong> en promedio, <strong>276650</strong> peticiones totales, <strong>2.44%</strong> de error y una latencia con una cola larga significativa. La grafica, por su parte, aporta el comportamiento temporal que el resumen por si solo no puede mostrar.</p>
+  <p>El punto visible del diagrama en <strong>2025-04-24 02:02:00</strong> indica <strong>140 VUs</strong> y <strong>82.6 req/s</strong>. Eso es totalmente coherente con el promedio de 73.18 req/s del resumen, porque la grafica tambien muestra una caida intermedia pronunciada del throughput. Dicho de otra manera: el sistema si alcanza una banda cercana a <strong>75-85 req/s</strong> bajo 140 VUs, pero no logra sostenerla sin sobresaltos durante toda la ejecucion.</p>
+  <p>La reconstruccion aproximada del diagrama muestra tambien que el throughput cae hasta una zona cercana a <strong>0.00 req/s</strong> sin que desaparezca la carga. Esa oscilacion es la pieza visual que explica por que un punto puntual de 82.6 req/s puede convivir con un promedio global inferior.</p>
+
+  <h3>Relacion puntual entre VUs y throughput</h3>
+  <div class="formula">82.60 / 140 = 0.59 req/s por VU</div>
+  <p>Ese calculo no representa una ley universal del sistema, pero ayuda a describir el punto visible del diagrama. La relacion de ese instante es cercana a <strong>0.59 req/s por VU</strong>. Lo importante no es el numero exacto, sino que el servicio, aun con 140 VUs activos, presenta fluctuaciones fuertes y no una curva estable de rendimiento.</p>
+
+  <div class="chart">
+    <img src="file:///C:/Sofka%20U/S9-RetoCalidad-EjercicioPerformance/ejercicio-2/graficas/reconstruccion-monitoreo.png" alt="Reconstruccion del monitoreo">
+    <div class="caption">Figura 3. Reconstruccion aproximada del monitoreo entregado. Se usa como apoyo visual, no como telemetria cruda. Muestra una fase estable, una caida fuerte a mitad de la corrida y una recuperacion posterior.</div>
+  </div>
+
+  <h2>5. Analisis de errores por etapa</h2>
+  <p>El reparto de errores no esta distribuido de forma uniforme. Casi toda la carga fallida se concentra en <strong>stage_1</strong>, que por contexto se interpreta como la fase principal de la prueba.</p>
+
+  <h3>Concentracion de fallos en la etapa principal</h3>
+  <div class="formula">6,756 / 6,759 x 100 = 99.96%</div>
+  <p>Esto significa que <strong>stage_1 concentra practicamente todos los errores</strong>. La lectura operativa es clara: el sistema no falla de manera aleatoria al inicio o al final; falla sobre todo cuando esta sometido al tramo fuerte de carga.</p>
+
+  <h3>Peso de los errores 5xx dentro del total</h3>
+  <div class="formula">5,990 / 6,759 x 100 = 88.62%</div>
+  <p>Que casi el <strong>88.62%</strong> de las fallas sean <strong>5xx</strong> desplaza el foco hacia el servidor o sus dependencias. Los 4xx existen, pero son secundarios frente a la magnitud del problema del lado backend.</p>
+
+  <div class="chart">
+    <img src="file:///C:/Sofka%20U/S9-RetoCalidad-EjercicioPerformance/ejercicio-2/graficas/errores-por-etapa.png" alt="Errores por etapa">
+    <div class="caption">Figura 4. La etapa principal concentra la mayor parte de los errores y, dentro de ella, dominan claramente los 5xx.</div>
+  </div>
+
+  <h2>6. Posibles cuellos de botella y causas probables</h2>
+  <p>Con la evidencia disponible no es posible demostrar una causa raiz unica. Sin embargo, si es posible jerarquizar causas probables y distinguir entre afirmaciones sustentadas y especulaciones razonables.</p>
+
+  <h3>6.1 Evidencia directa observable</h3>
+  <ul>
+    <li><strong>Dominio del tiempo de espera del servidor.</strong> El promedio de <code>http_req_waiting</code> es casi igual al de <code>http_req_duration</code>. Esto apunta a saturacion dentro del backend.</li>
+    <li><strong>Presencia dominante de errores 5xx.</strong> La mayor parte de los fallos son respuestas de servidor, no errores del cliente.</li>
+    <li><strong>Caida del throughput con 140 VUs activos.</strong> El diagrama muestra una fase en la que el ritmo de peticiones cae con fuerza mientras la carga se mantiene alta. Eso sugiere degradacion de la capacidad efectiva del sistema.</li>
+    <li><strong>Cola larga de latencia.</strong> La diferencia entre mediana, promedio, p95 y maximo confirma que existe un subconjunto de peticiones muy afectadas por la saturacion.</li>
+  </ul>
+
+  <h3>6.2 Causas probables en un escenario real</h3>
+  <ul>
+    <li><strong>Saturacion de CPU o de hilos del servidor.</strong> Es compatible con tiempos de espera altos, throughput inestable y 5xx durante la fase principal.</li>
+    <li><strong>Cuello de botella en base de datos.</strong> Consultas lentas, bloqueos o limites de conexiones pueden incrementar el waiting y provocar degradacion general del servicio.</li>
+    <li><strong>Agotamiento de pools.</strong> Pools de conexiones HTTP, base de datos o threads demasiado pequenos pueden generar cola interna aunque la red externa se vea sana.</li>
+    <li><strong>Dependencia externa inestable.</strong> Si la transaccion depende de otro servicio, la aplicacion puede responder tarde o fallar aun cuando el endpoint expuesto sea el que aparece como 5xx.</li>
+    <li><strong>Ausencia de una capa de balanceo o resiliencia al frente del servicio.</strong> El material entregado no muestra evidencia de un load balancer o de mecanismos de distribucion; si en un escenario real esa capa no existiera, la degradacion bajo carga sostenida podria amplificarse.</li>
+    <li><strong>Configuracion deficiente bajo carga sostenida.</strong> Timeouts, limites de workers o garbage collection agresivo tambien podrian explicar un comportamiento que se degrada y luego se recupera.</li>
+  </ul>
+
+  <h3>6.3 Que se puede afirmar y que no</h3>
+  <div class="callout">
+    <p><strong>Se puede afirmar con evidencia:</strong> el cuello de botella no parece ser la red del cliente; la degradacion aparece principalmente en la etapa principal; el throughput cae en ciertos tramos aun con alta concurrencia; y la mayor parte del problema se manifiesta como espera y errores 5xx.</p>
+    <p><strong>No se puede afirmar con certeza solo con esta evidencia:</strong> si la causa exacta fue CPU, base de datos, pool de conexiones, dependencia externa u otra capa de infraestructura. Esas causas deben tratarse como hipotesis razonables hasta validarlas con telemetria adicional del backend.</p>
+  </div>
+
+  <h2>7. Punto mas importante del analisis</h2>
+  <p>El punto mas importante es que <strong>el sistema si procesa un volumen alto, pero no lo hace de forma estable bajo la carga principal</strong>. La evidencia conjunta de k6 y del diagrama muestra una mezcla de tres senales: caida visible del throughput, concentracion de errores 5xx en la etapa fuerte y tiempos de espera del servidor que explican casi toda la latencia. En conjunto, eso describe un cuello de botella del lado servidor o de sus dependencias, no un problema primario de red.</p>
+
+  <h2>8. Conclusiones</h2>
+  <ul>
+    <li>La prueba movio un volumen considerable de peticiones y demuestra que el sistema tiene cierta capacidad de procesamiento, pero no una estabilidad completa bajo carga alta.</li>
+    <li>El promedio de 73.18 req/s es real, pero no representa estabilidad continua; la grafica deja ver una degradacion marcada a mitad de la ejecucion.</li>
+    <li>El comportamiento de <code>http_req_waiting</code> sugiere que el mayor tiempo se pierde dentro del backend y no en la red del cliente.</li>
+    <li>La etapa principal concentra practicamente todos los errores, y dentro de ellos dominan de forma clara los 5xx.</li>
+    <li>La evidencia disponible permite hablar de saturacion o degradacion del servidor, pero no permite aislar una causa raiz unica sin telemetria interna adicional.</li>
+  </ul>
+
+  <h2>9. Recomendaciones</h2>
+  <p>En un escenario real, estas serian las acciones mas utiles para diagnosticar mejor el problema y reducir la posibilidad de recurrencia.</p>
+  <ul>
+    <li>Correlacionar la ventana de la prueba con metricas de CPU, memoria, hilos, pool de conexiones y base de datos para validar la causa exacta del waiting elevado.</li>
+    <li>Revisar logs de aplicacion y de infraestructura en la fase equivalente a <code>stage_1</code>, donde se concentra el 99.96% de los errores.</li>
+    <li>Analizar especificamente los <strong>5xx</strong> para identificar si provienen de saturacion, timeouts, dependencias externas o errores de negocio mal controlados.</li>
+    <li>Ejecutar una nueva prueba escalonada con puntos intermedios de concurrencia para ubicar con mayor precision el umbral donde empieza la degradacion.</li>
+    <li>Si se confirma presion sobre base de datos, revisar indices, tiempos de consulta y limites de conexiones; si se confirma presion sobre la aplicacion, revisar workers, timeouts y politica de escalado.</li>
+    <li>Mantener en el informe una distincion clara entre evidencia y especulacion para no sobreinterpretar los datos disponibles.</li>
+  </ul>
+
+  <p class="small">Fuente de datos: transcripcion del resumen de k6 y reconstruccion aproximada del diagrama de monitoreo entregado. La reconstruccion grafica se incluye como apoyo visual y no sustituye a la telemetria original.</p>
+</body>
+</html>

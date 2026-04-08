@@ -1,0 +1,13 @@
+Fuente: captura de pantalla del monitoreo entregada junto al ejercicio.
+
+Observaciones transcritas de la grafica:
+- El eje izquierdo corresponde a VUs y el derecho a http_reqs por segundo.
+- El tooltip visible marca el punto 2025-04-24 02:02:00 con 140 VUs y 82.6 http_reqs/s.
+- La prueba muestra un tramo principal con 140 VUs sostenidos.
+- Durante buena parte del tramo principal el throughput visible oscila aproximadamente entre 75 y 85 req/s.
+- En la mitad de la ejecucion se observa una caida marcada del throughput, aproximadamente a una banda entre 10 y 25 req/s.
+- Tras esa caida el throughput se recupera y vuelve a una banda cercana a 75-85 req/s.
+- Al final de la prueba la grafica desciende por el cierre de la ejecucion.
+
+Nota:
+- La grafica original no entrega los datos crudos, solo evidencia visual. Cualquier reconstruccion numerica adicional debe tratarse como aproximacion derivada de la captura.
